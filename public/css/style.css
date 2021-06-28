@@ -1,0 +1,35 @@
+
+.container {
+    margin-top: 100px;
+    height: 500px;
+    border: 3px;
+    border-style: solid;
+    overflow: auto;
+}
+.form-select {
+    width: 50%;
+    display: inline;
+}
+button {
+    width: 100px;
+    display: inline;
+}
+#customFile {
+    width: 32%;
+    display: inline;
+}
+table {
+    border: 1;
+}
+form {
+    width: 50%;
+    background-color:rgb(48 101 101 / 70%);
+    position: fixed;
+    border: solid;
+    border-radius: 35px;
+    text-align: center;
+    display: none;
+}
+label {
+    color: white;
+}

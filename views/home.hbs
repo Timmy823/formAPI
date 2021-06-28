@@ -1,0 +1,25 @@
+
+<link rel="stylesheet" type="text/css" href="/css/style.css">
+<div class="container">
+    <div class="rows">
+        <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+            <option value="initial" selected>選擇資料...</option>
+            {{#each sheetList}}
+            <option value="{{this}}" >{{this}}</option>
+            {{/each}}
+        </select>
+        <button type="button" class="btn btn-outline-success" id="append" disabled>新增資料</button>
+        <input type="file" class="form-control" id="customFile" accept=".xlsx,.xls,.csv,.txt,.json"/>
+        <button type="button" class="btn btn-outline-success" id="upload" disabled>上傳檔案</button>
+    </div>
+    <hr>
+    <div class="rows">
+        <table class="table">
+            <thead></thead>
+        </table>
+    </div>
+    <form></form>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js"></script>
+<script src="/js/jquery.bpopup.min.js"></script>
+<script src="/js/style.js"></script>

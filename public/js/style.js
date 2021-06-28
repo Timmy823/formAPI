@@ -116,6 +116,7 @@ $(document).ready(()=>{
                     return $("<option value='"+e+"'>"+e+"</option>");
                 });
                 $("select").append(option_type);
+                $('#upload').attr("disabled", "disabled");
             },
             error: ()=>{
                 console.log("error");

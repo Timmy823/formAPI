@@ -34,7 +34,7 @@ const upload = multer({storage: storage});
 
 
 app.get('/',(req, res)=>{
-    dbAPI.listsheet('suitAPP', (reply)=>{
+    dbAPI.listsheet('database_2', (reply)=>{
         res.render('home',{
             sheetList: reply
         });
@@ -46,7 +46,7 @@ app.get('/',(req, res)=>{
     // });
 });
 app.get('/listData', (req, res)=>{
-    new dbAPI(req.query.sheetName).listdata('suitAPP', (reply)=>{
+    new dbAPI(req.query.sheetName).listdata('database_2', (reply)=>{
         if(typeof reply !== 'undefined'){
             res.status(200).send({
                 SheetData: reply
@@ -63,7 +63,7 @@ app.get('/listData', (req, res)=>{
 });
 app.post('/', upload.single('file'), (req, res)=>{
     const filetype = req.file['filename'].split(".")[1];
-    dbAPI.importData(req.file.path, filetype,'suitAPP',(err, reply)=>{
+    dbAPI.importData(req.file.path, filetype,'database_2',(err, reply)=>{
         if(err) console.log(err);
         if(typeof reply !== 'undefined'){
             console.log(reply);
@@ -92,7 +92,7 @@ app.post('/insertData', (req, res)=>{
     let inputData = JSON.parse(JSON.stringify(req.body));
     console.log(inputData);
     delete inputData.sheetName;
-    new dbAPI(req.body.sheetName).insertdata('suitAPP', inputData,(reply)=>{
+    new dbAPI(req.body.sheetName).insertdata('database_2', inputData,(reply)=>{
         res.status(200).send({
             currRow: reply
         });

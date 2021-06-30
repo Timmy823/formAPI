@@ -112,8 +112,14 @@ $(document).ready(()=>{
                 console.log("success");
                 alert("上傳成功");
                 $('input[type=file]').val("");
+                let existTable = new Array();
+                $('option').each(function(){
+                    existTable.push($(this).val());
+                });
                 let option_type = data.newSheet.map((e)=>{
-                    return $("<option value='"+e+"'>"+e+"</option>");
+                    if(existTable.indexOf(e) == -1){
+                        return $("<option value='"+e+"'>"+e+"</option>");
+                    }
                 });
                 $("select").append(option_type);
 		$('#upload').attr("disabled", "disabled");

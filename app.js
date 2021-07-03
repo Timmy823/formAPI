@@ -2,8 +2,10 @@ const express = require('express');
 const exhbs = require('express-handlebars');
 const multer = require('multer');
 //const userdb = require('./lib/userdb.js');
-const AccessSheetData = require('./lib/databaseAPI.js');
-const dbAPI = new AccessSheetData().sheet;
+//const AccessSheetData = require('./lib/databaseAPI.js');
+//const dbAPI = new AccessSheetData().sheet;
+const AccessSheetData2 = require('./lib/new_databaseAPI.js');
+const dbAPI = new AccessSheetData2('database_2');
 require('dotenv').config()
 
 const app = express();
@@ -31,14 +33,18 @@ const storage = multer.diskStorage({
 });
 const upload = multer({storage: storage});
 
-
-
 app.get('/',(req, res)=>{
-    dbAPI.listsheet('database_2', (reply)=>{
+    // Receive the current table in this schema
+    dbAPI.listsheet((reply)=>{
         res.render('home',{
             sheetList: reply
         });
     });
+    // dbAPI.listsheet('database_2', (reply)=>{
+    //     res.render('home',{
+    //         sheetList: reply
+    //     });
+    // });
     // userdb.ListSheet('suitAPP', (reply)=>{
     //     res.render('home',{
     //         sheetList: reply
@@ -46,13 +52,21 @@ app.get('/',(req, res)=>{
     // });
 });
 app.get('/listData', (req, res)=>{
-    new dbAPI(req.query.sheetName).listdata('database_2', (reply)=>{
+    // Receive the whole data of the given sheet
+    dbAPI.listdata(req.query.sheetName, (reply)=>{
         if(typeof reply !== 'undefined'){
             res.status(200).send({
                 SheetData: reply
             });
         }
     });
+    // new dbAPI(req.query.sheetName).listdata('database_2', (reply)=>{
+    //     if(typeof reply !== 'undefined'){
+    //         res.status(200).send({
+    //             SheetData: reply
+    //         });
+    //     }
+    // });
     // userdb.ListData('suitAPP', req.query.sheetName, (reply)=>{
     //     if(typeof reply !== 'undefined'){
     //         res.status(200).send({
@@ -63,8 +77,8 @@ app.get('/listData', (req, res)=>{
 });
 app.post('/', upload.single('file'), (req, res)=>{
     const filetype = req.file['filename'].split(".")[1];
-    dbAPI.importData(req.file.path, filetype,'database_2',(err, reply)=>{
-        if(err) console.log(err);
+    // Receive the list of new table
+    dbAPI.importData(req.file.path, filetype, (reply)=>{
         if(typeof reply !== 'undefined'){
             console.log(reply);
             res.status(200).send({
@@ -75,6 +89,18 @@ app.post('/', upload.single('file'), (req, res)=>{
             console.log("上傳失敗");
         }
     });
+    // dbAPI.importData(req.file.path, filetype,'database_2',(err, reply)=>{
+    //     if(err) console.log(err);
+    //     if(typeof reply !== 'undefined'){
+    //         console.log(reply);
+    //         res.status(200).send({
+    //             newSheet: reply
+    //         });
+    //     }
+    //     else{
+    //         console.log("上傳失敗");
+    //     }
+    // });
     // userdb.ImportExcel(req.file.path,'suitAPP',(err, reply)=>{
     //     if(err) console.log(err);
     //     if(typeof reply !== 'undefined'){
@@ -89,14 +115,20 @@ app.post('/', upload.single('file'), (req, res)=>{
     // });
 });
 app.post('/insertData', (req, res)=>{
-    let inputData = JSON.parse(JSON.stringify(req.body));
+    const inputData = JSON.parse(JSON.stringify(req.body));
     console.log(inputData);
     delete inputData.sheetName;
-    new dbAPI(req.body.sheetName).insertdata('database_2', inputData,(reply)=>{
+    // Receive the current row number.
+    dbAPI.insertdata(req.body.sheetName, inputData,(reply)=>{
         res.status(200).send({
             currRow: reply
         });
     });
+    // new dbAPI(req.body.sheetName).insertdata('database_2', inputData,(reply)=>{
+    //     res.status(200).send({
+    //         currRow: reply
+    //     });
+    // });
     // userdb.InsertData('suitAPP',req.body.sheetName, inputData,(reply)=>{
     //     res.status(200).send({
     //         currRow: reply

@@ -1,37 +1,42 @@
-const express = require('express');
-const exhbs = require('express-handlebars');
-const multer = require('multer');
+import dotenv from 'dotenv';
+import path from 'path';
+
+import express from 'express';
+import exphbs from 'express-handlebars';
+import multer from 'multer';
+
+import {AccessSheetData} from './lib/new_databaseAPI.js';
 //const userdb = require('./lib/userdb.js');
 //const AccessSheetData = require('./lib/databaseAPI.js');
 //const dbAPI = new AccessSheetData().sheet;
-const AccessSheetData2 = require('./lib/new_databaseAPI.js');
-const dbAPI = new AccessSheetData2('database_2');
-require('dotenv').config()
 
+dotenv.config();
+const __dirname = path.resolve();
 const app = express();
-
-app.engine('.hbs',exhbs({
-    defaultLayout:'main',
-    extname:'.hbs',
-    layoutsDir:__dirname+'/views/layouts/',
-    partialsDir:__dirname+'/views/partials/'
-}));
-//set the view engine is .hbs
-app.set('view engine', '.hbs');
-
-app.use(express.static(__dirname + '/public'));
-app.use(express.urlencoded({extended:false}));
-app.use(express.json());
-
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
+    destination: (req, file, cb) => {
         cb(null, __dirname + '/public/upload/')      //you tell where to upload the files,
     },
-    filename: function (req, file, cb) {
+    filename:  (req, file, cb) => {
         cb(null, file.originalname)
     }
 });
 const upload = multer({storage: storage});
+
+const dbAPI = new AccessSheetData('database_2');
+
+app.engine('.hbs',exphbs({
+    defaultLayout:'main',
+    extname:'.hbs',
+    layoutsDir: __dirname+'/views/layouts/',
+    partialsDir: __dirname+'/views/partials/'
+}))
+//set the view engine is .hbs
+app.set('view engine', '.hbs')
+
+app.use(express.static(__dirname + '/public'))
+app.use(express.urlencoded({extended:false}))
+app.use(express.json())
 
 app.get('/',(req, res)=>{
     // Receive the current table in this schema
@@ -40,16 +45,6 @@ app.get('/',(req, res)=>{
             sheetList: reply
         });
     });
-    // dbAPI.listsheet('database_2', (reply)=>{
-    //     res.render('home',{
-    //         sheetList: reply
-    //     });
-    // });
-    // userdb.ListSheet('suitAPP', (reply)=>{
-    //     res.render('home',{
-    //         sheetList: reply
-    //     });
-    // });
 });
 app.get('/listData', (req, res)=>{
     // Receive the whole data of the given sheet
@@ -60,20 +55,6 @@ app.get('/listData', (req, res)=>{
             });
         }
     });
-    // new dbAPI(req.query.sheetName).listdata('database_2', (reply)=>{
-    //     if(typeof reply !== 'undefined'){
-    //         res.status(200).send({
-    //             SheetData: reply
-    //         });
-    //     }
-    // });
-    // userdb.ListData('suitAPP', req.query.sheetName, (reply)=>{
-    //     if(typeof reply !== 'undefined'){
-    //         res.status(200).send({
-    //             SheetData: reply
-    //         });
-    //     }
-    // });
 });
 app.post('/', upload.single('file'), (req, res)=>{
     const filetype = req.file['filename'].split(".")[1];
@@ -89,30 +70,6 @@ app.post('/', upload.single('file'), (req, res)=>{
             console.log("上傳失敗");
         }
     });
-    // dbAPI.importData(req.file.path, filetype,'database_2',(err, reply)=>{
-    //     if(err) console.log(err);
-    //     if(typeof reply !== 'undefined'){
-    //         console.log(reply);
-    //         res.status(200).send({
-    //             newSheet: reply
-    //         });
-    //     }
-    //     else{
-    //         console.log("上傳失敗");
-    //     }
-    // });
-    // userdb.ImportExcel(req.file.path,'suitAPP',(err, reply)=>{
-    //     if(err) console.log(err);
-    //     if(typeof reply !== 'undefined'){
-    //         console.log(reply);
-    //         res.status(200).send({
-    //             newSheet: reply
-    //         });
-    //     }
-    //     else{
-    //         console.log("上傳失敗");
-    //     }
-    // });
 });
 app.post('/insertData', (req, res)=>{
     const inputData = JSON.parse(JSON.stringify(req.body));
@@ -124,16 +81,6 @@ app.post('/insertData', (req, res)=>{
             currRow: reply
         });
     });
-    // new dbAPI(req.body.sheetName).insertdata('database_2', inputData,(reply)=>{
-    //     res.status(200).send({
-    //         currRow: reply
-    //     });
-    // });
-    // userdb.InsertData('suitAPP',req.body.sheetName, inputData,(reply)=>{
-    //     res.status(200).send({
-    //         currRow: reply
-    //     });
-    // });
 });
 app.listen(3000,()=>{
     console.log("web build");

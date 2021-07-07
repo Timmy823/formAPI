@@ -19,7 +19,7 @@ $(document).ready(()=>{
                 const columns = Object.keys(data.SheetData[0]);
                 currColumnName = [...columns];
                 let tableContent = [$('<tr>'),$('<th scope="col">#</th>')];
-                columns.map((e)=>{
+                columns.forEach(e=>{
                     tableContent.push($('<th scope="col">' +e+'</th>'));
                 });
                 tableContent.push($('</tr>'));
@@ -73,23 +73,16 @@ $(document).ready(()=>{
             console.log($("form").serializeObject());
             $.ajax({
                 type: "POST",
-                dataType: "json",
                 data: sendData,
-                url: "/insertData",
-                success:(data)=>{
-                    console.log('success');
-                    delete sendData.sheetName;
-                    let tableContent = [$('<tr>'),$('<th scope="row">' +(data.currRow).toString()+'</th>')];
-                    Object.keys(sendData).map((e)=>{
-                        tableContent.push($('<th scope="row">' +sendData[e]+'</th>'));
-                    })
-                    $(".table").find('thead').append(tableContent);
-                    bpopup.close();
-                },
-                error:()=>{
-                    console.log("error");
-                }
+                url: "/insertData"
+            });
+            delete sendData.sheetName;
+            let tableContent = [$('<tr>'),$('<th scope="row">' +($('tr').last().prevObject.length).toString()+'</th>')];
+            Object.keys(sendData).forEach(e =>{
+                tableContent.push($('<th scope="row">' +sendData[e]+'</th>'));
             })
+            $(".table").find('thead').append(tableContent);
+            bpopup.close();
         });
     });
     // If there is a file in upload buffer, enable upload button.

@@ -5,7 +5,7 @@ import express from 'express';
 import exphbs from 'express-handlebars';
 import multer from 'multer';
 
-import {AccessSheetData} from './lib/new_databaseAPI.js';
+import {AccessSchemaData} from './lib/SchemaAPI.js';
 //const userdb = require('./lib/userdb.js');
 //const AccessSheetData = require('./lib/databaseAPI.js');
 //const dbAPI = new AccessSheetData().sheet;
@@ -14,16 +14,16 @@ dotenv.config();
 const __dirname = path.resolve();
 const app = express();
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
+    destination: function(req, file, cb){
         cb(null, __dirname + '/public/upload/')      //you tell where to upload the files,
     },
-    filename:  (req, file, cb) => {
+    filename:  function(req, file, cb){
         cb(null, file.originalname)
     }
 });
 const upload = multer({storage: storage});
 
-const dbAPI = new AccessSheetData('database_2');
+const dbAPI = new AccessSchemaData('database_2');
 
 app.engine('.hbs',exphbs({
     defaultLayout:'main',
@@ -75,12 +75,9 @@ app.post('/insertData', (req, res)=>{
     const inputData = JSON.parse(JSON.stringify(req.body));
     console.log(inputData);
     delete inputData.sheetName;
-    // Receive the current row number.
-    dbAPI.insertdata(req.body.sheetName, inputData,(reply)=>{
-        res.status(200).send({
-            currRow: reply
-        });
-    });
+    // Insert data into the corresponding table
+    dbAPI.insertdata(req.body.sheetName, inputData);
+    res.status(200);
 });
 app.listen(3000,()=>{
     console.log("web build");

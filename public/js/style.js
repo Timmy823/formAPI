@@ -169,13 +169,13 @@ $(document).ready(()=>{
                     }
                 });
                 $("select").append(option_type);
-                $('#upload').attr("disabled", "disabled");
+		$('#upload').attr("disabled", "disabled");
             },
             error: ()=>{
                 console.log("error");
             }
         });
-    });
+    })
 
     // $('#edit').click(()=>{
     //     // First, make a form fitting the colomns of the selected sheet.

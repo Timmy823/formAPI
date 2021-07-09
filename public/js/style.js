@@ -58,6 +58,8 @@ $(document).ready(()=>{
     $('#append').click(()=>{
         // First, make a form fitting the colomns of the selected sheet.
         $("form").empty();
+        $('form').removeData('validator');  //reset the validator
+        
         let formContent = new Array();   // the content of form
         let inputRule = new Object();    // validation rules
         let HintMessage = new Object();  // error messages
@@ -76,12 +78,13 @@ $(document).ready(()=>{
         // Second, bpopup this form.
         const bpopup = $('form').bPopup({
             fadeSpeed: 'slow', 
-            followSpeed: 1500
+            followSpeed: 1500,
         });
         console.log(inputRule);
         console.log(HintMessage);
         // Third, submit and dynamically update the content of table.
-        $("form").validate({
+        // Besides, add a validator with rules and error messages.
+        const validator = $("form").validate({
             debug: true,
             submitHandler: (event) => {
                 console.log("click");
@@ -106,13 +109,14 @@ $(document).ready(()=>{
             },
             rules: inputRule,
             messages: HintMessage,
-            highlight: function(element, errorClass) {
+            highlight: (element, errorClass)=>{
                 $(element).addClass("error-input");
             },
-            unhighlight: function(element, errorClass) {
+            unhighlight: (element, errorClass)=>{
                 $(element).removeClass("error-input");
             }
         });
+        
         // $('button[type=submit]').click((event)=>{
         //     console.log("click");
         //     event.preventDefault();

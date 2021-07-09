@@ -1,6 +1,13 @@
 $(document).ready(()=>{
     let file;
     let currColumnName;
+
+    /* customized valiated method */
+    // $.validator.addMethod("phoneNum", function(value, element) {
+    //     console.log(this);
+    //     return this.optional(element) || /^\d{4}-\d{3}-\d{3}$/.test(value);
+    // }, 'Please enter valid phone number');
+
     // list all data in this selected data and display in the table.
     $('select').change((e)=>{
         console.log("change");
@@ -51,11 +58,17 @@ $(document).ready(()=>{
     $('#append').click(()=>{
         // First, make a form fitting the colomns of the selected sheet.
         $("form").empty();
-        let formContent = new Array();
+        let formContent = new Array();   // the content of form
+        let inputRule = new Object();    // validation rules
+        let HintMessage = new Object();  // error messages
         formContent.push($('<p style="text-align: center;font-size: 35px;color: white;">新增資料</p>'));
         currColumnName.map((e, idx)=>{
             formContent.push($('<div class="form-group" style="width: 50%;margin-left: 20px; margin:auto"><label>'+e+'</label><input type="text" class="form-control" name="'+String.fromCharCode(65+idx)+'" placeholder="Enter '+e+'">'));
-        })
+            inputRule[String.fromCharCode(65+idx)] = 'required';
+            HintMessage[String.fromCharCode(65+idx)] = {
+                required: "請輸入"+e
+            };
+        });
         formContent.push($('<p></p>'));
         formContent.push($('<button type="submit" class="btn btn-primary">Submit</button>'));
         $("form").append(formContent);
@@ -65,29 +78,62 @@ $(document).ready(()=>{
             fadeSpeed: 'slow', 
             followSpeed: 1500
         });
-
+        console.log(inputRule);
+        console.log(HintMessage);
         // Third, submit and dynamically update the content of table.
-        $('button[type=submit]').click((event)=>{
-            console.log("click");
-            event.preventDefault();
-            let sendData = {
-                sheetName: $('option:selected').val()
-            };
-            sendData = Object.assign(sendData, $("form").serializeObject());
-            console.log($("form").serializeObject());
-            $.ajax({
-                type: "POST",
-                data: sendData,
-                url: "/insertData"
-            });
-            delete sendData.sheetName;
-            let tableContent = [$('<tr>'),$('<th scope="row">' +($('tr').last().prevObject.length).toString()+'</th>')];
-            Object.keys(sendData).forEach(e =>{
-                tableContent.push($('<th scope="row">' +sendData[e]+'</th>'));
-            })
-            $(".table").find('thead').append(tableContent);
-            bpopup.close();
+        $("form").validate({
+            debug: true,
+            submitHandler: (event) => {
+                console.log("click");
+                //event.preventDefault();
+                let sendData = {
+                    sheetName: $('option:selected').val()
+                };
+                sendData = Object.assign(sendData, $("form").serializeObject());
+                console.log($("form").serializeObject());
+                $.ajax({
+                    type: "POST",
+                    data: sendData,
+                    url: "/insertData"
+                });
+                delete sendData.sheetName;
+                let tableContent = [$('<tr>'),$('<th scope="row">' +($('tr').last().prevObject.length).toString()+'</th>')];
+                Object.keys(sendData).forEach(e =>{
+                    tableContent.push($('<th scope="row">' +sendData[e]+'</th>'));
+                })
+                $(".table").find('thead').append(tableContent);
+                bpopup.close();
+            },
+            rules: inputRule,
+            messages: HintMessage,
+            highlight: function(element, errorClass) {
+                $(element).addClass("error-input");
+            },
+            unhighlight: function(element, errorClass) {
+                $(element).removeClass("error-input");
+            }
         });
+        // $('button[type=submit]').click((event)=>{
+        //     console.log("click");
+        //     event.preventDefault();
+        //     let sendData = {
+        //         sheetName: $('option:selected').val()
+        //     };
+        //     sendData = Object.assign(sendData, $("form").serializeObject());
+        //     console.log($("form").serializeObject());
+        //     $.ajax({
+        //         type: "POST",
+        //         data: sendData,
+        //         url: "/insertData"
+        //     });
+        //     delete sendData.sheetName;
+        //     let tableContent = [$('<tr>'),$('<th scope="row">' +($('tr').last().prevObject.length).toString()+'</th>')];
+        //     Object.keys(sendData).forEach(e =>{
+        //         tableContent.push($('<th scope="row">' +sendData[e]+'</th>'));
+        //     })
+        //     $(".table").find('thead').append(tableContent);
+        //     bpopup.close();
+        // });
     });
     // If there is a file in upload buffer, enable upload button.
     $('input[type=file]').change((e)=>{
@@ -168,19 +214,19 @@ $(document).ready(()=>{
     //         bpopup.close();
     //     });
     // });
-    $('#instruction').click(()=>{
-        // First, make a form fitting the colomns of the selected sheet.
-        let InstructionContent = new Array();
-        InstructionContent.push($('<div class="instruction_bpopup" <p style="text-align: center;font-size: 35px;color: white;">上傳說明</p>'));
+    // $('#instruction').click(()=>{
+    //     // First, make a form fitting the colomns of the selected sheet.
+    //     let InstructionContent = new Array();
+    //     InstructionContent.push($('<div class="instruction_bpopup" <p style="text-align: center;font-size: 35px;color: white;">上傳說明</p>'));
         
-        InstructionContent.push($('<p></p>'));
-        InstructionContent.push($('<p>你可以選擇有.xlsx、.lsx、.csv、.json、.txt等檔名的檔案進行上傳</p>'));
-        $("form").append(InstructionContent);
+    //     InstructionContent.push($('<p></p>'));
+    //     InstructionContent.push($('<p>你可以選擇有.xlsx、.lsx、.csv、.json、.txt等檔名的檔案進行上傳</p>'));
+    //     $("form").append(InstructionContent);
 
-        // Second, bpopup this form.
-        const bpopup = $('form').bPopup({
-            fadeSpeed: 'slow', 
-            followSpeed: 1500
-        });
-    });
+    //     // Second, bpopup this form.
+    //     const bpopup = $('form').bPopup({
+    //         fadeSpeed: 'slow', 
+    //         followSpeed: 1500
+    //     });
+    // });
 });

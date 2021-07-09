@@ -38,3 +38,9 @@ form, .instruction_bpopup{
 label {
     color: white;
 }
+.error {
+    color: #f5a615;
+}
+.error-input {
+    background-color:rgb(251 164 164 / 70%);
+}

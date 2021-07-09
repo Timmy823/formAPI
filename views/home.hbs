@@ -1,7 +1,7 @@
 
 <link rel="stylesheet" type="text/css" href="/css/style.css">
 <div class="container">
-    <div class="rows">
+    <div class="rows rows-basic">
         <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
             <option value="initial" selected>選擇資料...</option>
             {{#each sheetList}}
@@ -12,8 +12,13 @@
         <input type="file" class="form-control" id="customFile" accept=".xlsx,.xls,.csv,.txt,.json"/>
         <button type="button" class="btn btn-outline-success" id="upload" disabled>上傳檔案</button>
     </div>
+    <div class="rows rows-advanced">
+        <button type="button" class="btn btn-outline-primary" id="edit" disabled>編輯資料</button>
+        <button type="button" class="btn btn-outline-danger" id="delete" disabled>刪除資料</button>
+        <button type="button" class="btn btn-warning float-end" id="instruction">上傳說明</button>
+    </div>
     <hr>
-    <div class="rows">
+    <div class="rows rows-table">
         <table class="table">
             <thead></thead>
         </table>
@@ -21,5 +26,6 @@
     <form></form>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js"></script>
 <script src="/js/jquery.bpopup.min.js"></script>
 <script src="/js/style.js"></script>

@@ -1,10 +1,11 @@
 
 .container {
+    position: relative;
     margin-top: 100px;
-    height: 500px;
+    height: 600px;
     border: 3px;
     border-style: solid;
-    overflow: auto;
+    overflow: hidden;
 }
 .form-select {
     width: 50%;
@@ -18,10 +19,14 @@ button {
     width: 32%;
     display: inline;
 }
+.rows-table {
+    height:430px;
+    overflow: auto;
+}
 table {
     border: 1;
 }
-form {
+form, .instruction_bpopup{
     width: 50%;
     background-color:rgb(48 101 101 / 70%);
     position: fixed;
@@ -32,4 +37,10 @@ form {
 }
 label {
     color: white;
+}
+.error {
+    color: #f5a615;
+}
+.error-input {
+    background-color:rgb(251 164 164 / 70%);
 }
